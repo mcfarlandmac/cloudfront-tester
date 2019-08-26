@@ -14,17 +14,13 @@ class RoboFile extends Tasks {
   /* @var \Aws\CloudFront\CloudFrontClient $cf_client */
   protected $cf_client;
 
-  public function __construct() {
-    $this->cf_config = Yaml::parseFile('./config.yml');
-
-    $this->cf_client = new CloudFrontClient([
-      'region' => 'us-east-1',
-      'version' => '2019-03-26',
-      'credentials' => [
-        'key' => $this->cf_config['credentials']['key'],
-        'secret' => $this->cf_config['credentials']['secret'],
-      ]
-    ]);
+  /**
+   * @description Perform any required setup before making AWS API calls.
+   *
+   * @command cf:setup
+   */
+  public function setup() {
+    $this->_copy('./scripts/setup/config.yml', './config.yml');
   }
 
   /**
@@ -33,6 +29,8 @@ class RoboFile extends Tasks {
    * @command cf:list
    */
   public function listDistributions() {
+    $this->_prepareCall();
+
     try {
       $result = $this->cf_client->listDistributions();
 
@@ -51,6 +49,8 @@ class RoboFile extends Tasks {
    * @command cf:test
    */
   public function testInvalidation() {
+    $this->_prepareCall();
+
     $this->say('----------- Starting invalidation. -----------');
 
     $invalidation = [
@@ -78,6 +78,22 @@ class RoboFile extends Tasks {
     }
 
     $this->say('----------- Invalidation finished. -----------');
+  }
+
+  /**
+   * Reads in any AWS configuration and sets up the CloudFront client.
+   */
+  protected function _prepareCall() {
+    $this->cf_config = Yaml::parseFile('./config.yml');
+
+    $this->cf_client = new CloudFrontClient([
+      'region' => 'us-east-1',
+      'version' => '2019-03-26',
+      'credentials' => [
+        'key' => $this->cf_config['credentials']['key'],
+        'secret' => $this->cf_config['credentials']['secret'],
+      ]
+    ]);
   }
 
 }
