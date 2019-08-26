@@ -1,0 +1,15 @@
+{
+    "name": "mcfarlandmac/cloudfront-tester",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Matt McFarland",
+            "email": "m.lee.mcfarland@gmail.com"
+        }
+    ],
+    "require": {
+        "consolidation/robo": "^1.4",
+        "aws/aws-sdk-php": "^3.110",
+        "symfony/yaml": "^4.3"
+    }
+}
